@@ -2,22 +2,25 @@ import { useEffect, useState } from "react";
 import Card from "./Card";
 import { backgroundimage } from "./constant";
 import { FaArrowRight } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Restaurants from "./Restaurants";
 
 const Home = () => {
 
     const [restaurantData, setRestaurantData] = useState([]);
+    const [query, setquery] = useState("");
+    const navigate = useNavigate();
 
     const getRestaurantDetail = async () => {
         const data = await fetch("https://foodmandu.com/webapi/api/Vendor/GetVendors1?Cuisine=&DeliveryZoneId=1&IsFav[…]ndorTagsCSV=FEATURED,&filtertags=FEATURED&search_by=restaurant");
         // await return promise
         const jsonData = await data.json(); 
         setRestaurantData(jsonData);
+        // console.log(jsonData);
     };
 
     useEffect(() => {
-        // getRestaurantDetail();  //API calling
+        getRestaurantDetail();  //API calling
     },[]
     );
 
@@ -30,8 +33,24 @@ const Home = () => {
                 <div className="absolute top-0 left-0 right-0 bottom-0  flex flex-col justify-center items-center">
                     <p className="text-[30px]">Order food from the widest range of restaurants.</p>
                     <div>
-                        <input className="outline-none p-2 w-[500px] mt-4" type="text" placeholder="Restaurants or cuisine" />
-                        <button className="bg-yellow-300 py-2 px-8">Find Restaurents</button>
+                        <input 
+                            className="outline-none p-2 w-[500px] mt-4" 
+                            type="text" 
+                            placeholder="Restaurants or cuisine" 
+                            onChange={(e) =>{
+                                setquery(e.target.value);
+                            }}
+                            value={query} 
+                            onKeyDown = {(e) => {
+                                if (e.code === "Enter") {
+                                    navigate("/restaurants?query="+ query);
+                                }
+                            }}
+                        />
+
+                        <Link to={"/restaurants?query="+ query}>
+                            <button className="bg-yellow-300 py-2 px-8">Find Restaurents</button>
+                        </Link>
                     </div>
                 </div>
             </div>
